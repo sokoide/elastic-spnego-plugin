@@ -1,4 +1,4 @@
-package org.elasticsearch.ingest.bano;
+package com.sokoide.elastic;
 
 import org.elasticsearch.action.admin.cluster.node.info.NodeInfo;
 import org.elasticsearch.action.admin.cluster.node.info.NodesInfoResponse;
@@ -11,11 +11,11 @@ import java.util.Collections;
 
 import static org.hamcrest.Matchers.is;
 
-public class BanoPluginIntegrationTest extends ESIntegTestCase {
+public class TestPluginTest extends ESIntegTestCase {
 
     @Override
     protected Collection<Class<? extends Plugin>> nodePlugins() {
-        return Collections.singleton(IngestBanoPlugin.class);
+        return Collections.singleton(TestPlugin.class);
     }
 
     public void testPluginIsLoaded() throws Exception {
@@ -23,7 +23,7 @@ public class BanoPluginIntegrationTest extends ESIntegTestCase {
         for (NodeInfo nodeInfo : response.getNodes()) {
             boolean pluginFound = false;
             for (PluginInfo pluginInfo : nodeInfo.getPlugins().getPluginInfos()) {
-                if (pluginInfo.getName().equals(IngestBanoPlugin.class.getName())) {
+                if (pluginInfo.getName().equals(TestPlugin.class.getName())) {
                     pluginFound = true;
                     break;
                 }
