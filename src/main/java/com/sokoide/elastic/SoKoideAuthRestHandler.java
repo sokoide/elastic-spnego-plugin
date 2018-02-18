@@ -43,6 +43,7 @@ public class SoKoideAuthRestHandler extends BaseRestHandler {
 
     @Override
     protected RestChannelConsumer prepareRequest(RestRequest request, NodeClient client) throws IOException {
+        logger.info("prepareRequest");
         return (channel) -> {
             client.execute(new SoKoideAuthAction(),
                     new SoKoideAuthRequest(request.method().name(), request.path(), request.content().utf8ToString()),
