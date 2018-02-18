@@ -5,7 +5,11 @@ import org.elasticsearch.client.node.NodeClient;
 import org.elasticsearch.common.inject.Inject;
 import org.elasticsearch.common.settings.Settings;
 import org.elasticsearch.common.xcontent.XContentBuilder;
-import org.elasticsearch.rest.*;
+import org.elasticsearch.rest.BaseRestHandler;
+import org.elasticsearch.rest.RestController;
+import org.elasticsearch.rest.RestHandler;
+import org.elasticsearch.rest.RestRequest;
+import org.elasticsearch.rest.action.RestToXContentListener;
 
 import java.io.IOException;
 import java.util.Map;
@@ -19,6 +23,10 @@ import org.elasticsearch.common.logging.ServerLoggers;
 public class SoKoideAuthRestHandler extends BaseRestHandler {
     private final Logger logger;
 
+    public String getName() {
+        return "SoKoideAuthRestHandler";
+    }
+
     @Inject
     public SoKoideAuthRestHandler(Settings settings, RestController controller) {
         super(settings);
@@ -26,8 +34,23 @@ public class SoKoideAuthRestHandler extends BaseRestHandler {
 
         logger.info("SoKoideAuthResthandler::ctor");
         controller.registerHandler(RestRequest.Method.GET, "/external/1", this);
+
+        //   controller.registerHandler(RestRequest.Method.POST, Constants.REST_REFRESH_PATH, this);
+        //   controller.registerHandler(RestRequest.Method.GET, Constants.REST_CONFIGURATION_PATH, this);
+        //   controller.registerHandler(RestRequest.Method.POST, Constants.REST_CONFIGURATION_PATH, this);
+        //   controller.registerHandler(RestRequest.Method.GET, Constants.REST_CONFIGURATION_FILE_PATH, this);
     }
 
+    @Override
+    protected RestChannelConsumer prepareRequest(RestRequest request, NodeClient client) throws IOException {
+        return (channel) -> {
+            client.execute(new SoKoideAuthAction(),
+                    new SoKoideAuthRequest(request.method().name(), request.path(), request.content().utf8ToString()),
+                    new RestToXContentListener<SoKoideAuthResponse>(channel));
+        };
+    }
+
+    //--------------------
     // @Override
     // public void handleRequest(RestRequest request, RestChannel channel, NodeClient client) throws IOException {
     //     logger.info("handleRequest");
@@ -39,28 +62,16 @@ public class SoKoideAuthRestHandler extends BaseRestHandler {
     //         throw new RuntimeException("authentication failed");
     // }
 
-    private boolean authenticate(List<String> header) {
-        logger.info("authenticate");
-        // TODO Use external services to authenticate further
-        return true;
-    }
-
-    @Override
-    public String getName() {
-        logger.info("getName");
-        return "SoKoideAuthRestHandler";
-    }
-
-    @Override
-    protected RestChannelConsumer prepareRequest(RestRequest restRequest, NodeClient client) throws IOException {
-        logger.info("prepareRequest");
-        // Actually this method should not be invoked, since there is no corresponding PATH for this handler
-        // Return {} in case.
-        return channel -> {
-            XContentBuilder builder = channel.newBuilder();
-            builder.startObject();
-            builder.endObject();
-            channel.sendResponse(new BytesRestResponse(RestStatus.OK, builder));
-        };
-    }
+    // @Override
+    // protected RestChannelConsumer prepareRequest(RestRequest restRequest, NodeClient client) throws IOException {
+    //     logger.info("prepareRequest");
+    //     // Actually this method should not be invoked, since there is no corresponding PATH for this handler
+    //     // Return {} in case.
+    //     return channel -> {
+    //         XContentBuilder builder = channel.newBuilder();
+    //         builder.startObject();
+    //         builder.endObject();
+    //         channel.sendResponse(new BytesRestResponse(RestStatus.OK, builder));
+    //     };
+    // }
 }
