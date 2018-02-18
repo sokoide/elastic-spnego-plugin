@@ -5,47 +5,47 @@ import org.elasticsearch.action.ActionRequestValidationException;
 
 public class SoKoideAuthRequest extends ActionRequest {
 
-  private String method;
-  private String content;
-  private String path;
+    private String method;
+    private String content;
+    private String path;
 
-  public SoKoideAuthRequest() {
-  }
+    public SoKoideAuthRequest() {
+    }
 
-  public SoKoideAuthRequest(String method, String path, String content) {
-    this.method = method;
-    this.content = content;
-    this.path = path;
-  }
+    public SoKoideAuthRequest(String method, String path, String content) {
+        this.method = method;
+        this.content = content;
+        this.path = path;
+    }
 
-  public String getPath() {
-    return path;
-  }
+    public String getPath() {
+        return path;
+    }
 
-  public void setPath(String path) {
-    this.path = path;
-  }
+    public void setPath(String path) {
+        this.path = path;
+    }
 
-  public String getMethod() {
-    return method;
-  }
+    public String getMethod() {
+        return method;
+    }
 
-  public void setMethod(String method) {
-    this.method = method;
-  }
+    public void setMethod(String method) {
+        this.method = method;
+    }
 
-  public String getContent() {
+    public String getContent() {
 
-    return content;
-  }
+        return content;
+    }
 
-  public void setContent(String content) {
-    this.content = content;
-  }
+    public void setContent(String content) {
+        this.content = content;
+    }
 
-  @Override
-  public ActionRequestValidationException validate() {
-    return null;
-  }
+    @Override
+    public ActionRequestValidationException validate() {
+        return null;
+    }
 
 }

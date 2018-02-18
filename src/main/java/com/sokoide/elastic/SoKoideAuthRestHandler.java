@@ -20,7 +20,7 @@ import org.elasticsearch.common.logging.ServerLoggers;
 
 // Reference
 // http://david.pilato.fr/blog/2016/10/19/adding-a-new-rest-endpoint-to-elasticsearch-updated-for-ga/
-public class SoKoideAuthRestHandler extends BaseRestHandler {
+public class SoKoideAuthRestHandler extends BaseRestHandler implements RestHandler {
     private final Logger logger;
 
     public String getName() {
@@ -33,7 +33,10 @@ public class SoKoideAuthRestHandler extends BaseRestHandler {
         this.logger = ServerLoggers.getLogger(getClass(), settings);
 
         logger.info("SoKoideAuthResthandler::ctor");
-        controller.registerHandler(RestRequest.Method.GET, "/external/1", this);
+        // controller.registerHandler(RestRequest.Method.GET, "/customer/external/1", this);
+        controller.registerHandler(RestRequest.Method.GET, "/hoge1/*", this);
+        controller.registerHandler(RestRequest.Method.GET, "/hoge2/*/*", this);
+        controller.registerHandler(RestRequest.Method.GET, "/customer/external/*", this);
 
         //   controller.registerHandler(RestRequest.Method.POST, Constants.REST_REFRESH_PATH, this);
         //   controller.registerHandler(RestRequest.Method.GET, Constants.REST_CONFIGURATION_PATH, this);
@@ -45,34 +48,11 @@ public class SoKoideAuthRestHandler extends BaseRestHandler {
     protected RestChannelConsumer prepareRequest(RestRequest request, NodeClient client) throws IOException {
         logger.info("prepareRequest");
         return (channel) -> {
-            client.execute(new SoKoideAuthAction(),
-                    new SoKoideAuthRequest(request.method().name(), request.path(), request.content().utf8ToString()),
-                    new RestToXContentListener<SoKoideAuthResponse>(channel));
-        };
+            client.execute(
+              new SoKoideAuthAction(),
+              new SoKoideAuthRequest(request.method().name(), request.path(), request.content().utf8ToString()),
+              new RestToXContentListener<SoKoideAuthResponse>(channel)
+            );
+          };
     }
-
-    //--------------------
-    // @Override
-    // public void handleRequest(RestRequest request, RestChannel channel, NodeClient client) throws IOException {
-    //     logger.info("handleRequest");
-    //     List<String> header = request.getHeaders().get("auth");
-    //     if (authenticate(header)) {
-    //         // execute the actual request
-    //         logger.info("header {}", header);
-    //     } else
-    //         throw new RuntimeException("authentication failed");
-    // }
-
-    // @Override
-    // protected RestChannelConsumer prepareRequest(RestRequest restRequest, NodeClient client) throws IOException {
-    //     logger.info("prepareRequest");
-    //     // Actually this method should not be invoked, since there is no corresponding PATH for this handler
-    //     // Return {} in case.
-    //     return channel -> {
-    //         XContentBuilder builder = channel.newBuilder();
-    //         builder.startObject();
-    //         builder.endObject();
-    //         channel.sendResponse(new BytesRestResponse(RestStatus.OK, builder));
-    //     };
-    // }
 }
