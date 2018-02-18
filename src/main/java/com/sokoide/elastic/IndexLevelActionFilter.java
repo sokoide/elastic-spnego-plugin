@@ -17,26 +17,37 @@ import org.elasticsearch.common.settings.Settings;
 import org.elasticsearch.env.Environment;
 import org.elasticsearch.tasks.Task;
 import org.elasticsearch.threadpool.ThreadPool;
+import org.elasticsearch.ElasticsearchStatusException;
+import org.elasticsearch.rest.RestStatus;
+import org.elasticsearch.action.index.IndexRequest;
+import org.elasticsearch.action.IndicesRequest;
+import org.elasticsearch.cluster.metadata.IndexNameExpressionResolver;
+import org.elasticsearch.action.support.IndicesOptions;
+import org.elasticsearch.action.get.GetRequest;
+import org.elasticsearch.action.update.UpdateRequest;
+import org.elasticsearch.action.delete.DeleteRequest;
 
 @Singleton
 public class IndexLevelActionFilter extends AbstractComponent implements ActionFilter {
 
     private final ThreadPool threadPool;
     private final ClusterService clusterService;
+    private final IndexNameExpressionResolver indexResolver;
     private final Settings settings;
     private final Logger logger;
 
     // private final AtomicReference<Optional<ACL>> acl;
     // private final AtomicReference<ESContext> context = new AtomicReference<>();
     // private final LoggerShim loggerShim;
-    // private final IndexNameExpressionResolver indexResolver;
 
     public IndexLevelActionFilter(Settings settings, ClusterService clusterService, NodeClient client,
             ThreadPool threadPool, Environment env) throws IOException {
         super(settings);
+
         this.settings = settings;
         this.threadPool = threadPool;
         this.clusterService = clusterService;
+        this.indexResolver = new IndexNameExpressionResolver(settings);
         this.logger = ServerLoggers.getLogger(getClass(), settings);
     }
 
@@ -99,9 +110,50 @@ public class IndexLevelActionFilter extends AbstractComponent implements ActionF
     public <Request extends ActionRequest, Response extends ActionResponse> void apply(Task task, String action,
             Request request, ActionListener<Response> listener, ActionFilterChain<Request, Response> chain) {
         logger.info("apply task:{}, action:{}, request:{}", task, action, request);
+        String index = null;
+
+        // dump indices
+        if (request instanceof IndexRequest) {
+            IndexRequest r = (IndexRequest) request;
+            logger.info("IndexRequst:{}", r);
+        }
+        if (request instanceof GetRequest) {
+            GetRequest r = (GetRequest) request;
+            logger.info("GetRequest index:{},type:{},id:{}", r.index(), r.type(), r.id());
+            index = r.index();
+        }
+        if (request instanceof UpdateRequest) {
+            UpdateRequest r = (UpdateRequest) request;
+            logger.info("UpdateRequest index:{},type:{},id:{}", r.index(), r.type(), r.id());
+            index = r.index();
+        }
+        if (request instanceof DeleteRequest) {
+            DeleteRequest r = (DeleteRequest) request;
+            logger.info("DeleteRequest index:{},type:{},id:{}", r.index(), r.type(), r.id());
+            index = r.index();
+        }
+        logger.info("request-class:{}", request.getClass());
+        
+        if (request instanceof IndicesRequest) {
+            IndicesRequest ir = (IndicesRequest) request;
+            IndicesOptions io = ir.indicesOptions();
+            logger.info("IndicesOptions:{}", io);
+
+            logger.info("IndicesRequest:{}", ir);
+            for (String i : ir.indices()) {
+                logger.info("IndicesRequest-index:{}", i);
+            }
+        }
 
         // TODO: check ACL here
-        chain.proceed(task, action, request, listener);
+        if (null != index && index.equals("hoge1")) {
+            ElasticsearchStatusException exc = new ElasticsearchStatusException("Unauthorized",
+                    RestStatus.UNAUTHORIZED);
+            exc.addHeader("WWW-Authenticate", "Negotiate");
+            listener.onFailure(exc);
+        } else {
+            chain.proceed(task, action, request, listener);
+        }
 
         // Optional<ACL> acl = this.acl.get();
         // if (acl.isPresent()) {
