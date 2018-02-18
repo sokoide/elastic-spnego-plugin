@@ -1,6 +1,8 @@
 package com.sokoide.elastic;
 
 // import cz.seznam.euphoria.shaded.guava.com.google.common.util.concurrent.FutureCallback;
+import org.apache.logging.log4j.Logger;
+
 import org.elasticsearch.action.ActionListener;
 import org.elasticsearch.action.support.ActionFilters;
 import org.elasticsearch.action.support.HandledTransportAction;
@@ -17,10 +19,12 @@ import org.elasticsearch.transport.TransportService;
 // import static tech.beshu.ror.commons.Constants.REST_CONFIGURATION_FILE_PATH;
 // import static tech.beshu.ror.commons.Constants.REST_CONFIGURATION_PATH;
 // import static tech.beshu.ror.commons.Constants.REST_REFRESH_PATH;
+import org.elasticsearch.common.logging.ServerLoggers;
 
 public class TransportSoKoideAuthAction extends HandledTransportAction<SoKoideAuthRequest, SoKoideAuthResponse> {
 
     private final NodeClient client;
+    private final Logger logger;
     // private final SettingsObservableImpl settingsObservable;
 
     @Inject
@@ -31,7 +35,9 @@ public class TransportSoKoideAuthAction extends HandledTransportAction<SoKoideAu
                 indexNameExpressionResolver, SoKoideAuthRequest::new);
         this.client = client;
         // this.settingsObservable = settingsObservable;
+        this.logger = ServerLoggers.getLogger(getClass(), settings);
 
+        logger.info("TransportSoKoideAuthAction ctor");
     }
 
     private String normalizePath(String s) {
@@ -42,8 +48,10 @@ public class TransportSoKoideAuthAction extends HandledTransportAction<SoKoideAu
     protected void doExecute(SoKoideAuthRequest request, ActionListener<SoKoideAuthResponse> listener) {
         try {
             String method = request.getMethod().toUpperCase();
-            // String body = request.getContent();
-            // String path = request.getPath();
+            String body = request.getContent();
+            String path = request.getPath();
+
+            logger.info("method:{}, path: {}, body: {}", method, path, body);
 
             if ("POST".equals(method)) {
                 // if (REST_REFRESH_PATH.equals(normalisePath(path))) {
@@ -90,6 +98,8 @@ public class TransportSoKoideAuthAction extends HandledTransportAction<SoKoideAu
                 //     listener.onResponse(new SoKoideAuthResponse(currentSettingsYAML));
                 //     return;
                 // }
+                listener.onResponse(new SoKoideAuthResponse("hoge"));
+                return;
             }
 
             listener.onFailure(new Exception("Didn't find anything to handle this request"));

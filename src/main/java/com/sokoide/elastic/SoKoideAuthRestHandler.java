@@ -33,15 +33,15 @@ public class SoKoideAuthRestHandler extends BaseRestHandler implements RestHandl
         this.logger = ServerLoggers.getLogger(getClass(), settings);
 
         logger.info("SoKoideAuthResthandler::ctor");
-        // controller.registerHandler(RestRequest.Method.GET, "/customer/external/1", this);
-        controller.registerHandler(RestRequest.Method.GET, "/hoge1/*", this);
-        controller.registerHandler(RestRequest.Method.GET, "/hoge2/*/*", this);
-        controller.registerHandler(RestRequest.Method.GET, "/customer/external/*", this);
 
-        //   controller.registerHandler(RestRequest.Method.POST, Constants.REST_REFRESH_PATH, this);
-        //   controller.registerHandler(RestRequest.Method.GET, Constants.REST_CONFIGURATION_PATH, this);
-        //   controller.registerHandler(RestRequest.Method.POST, Constants.REST_CONFIGURATION_PATH, this);
-        //   controller.registerHandler(RestRequest.Method.GET, Constants.REST_CONFIGURATION_FILE_PATH, this);
+        // SoKoideAuthRestHanlder is NOT used for ACL check
+        // ACL is checked by IndexLevelActionFilter.java
+        //
+        // controller.registerHandler(RestRequest.Method.GET, "/customer/external/1", this);
+        // controller.registerHandler(RestRequest.Method.GET, "/hoge1/*", this);
+        // controller.registerHandler(RestRequest.Method.GET, "/hoge2/*/*", this);
+        // controller.registerHandler(RestRequest.Method.GET, "/hoge2/*/*/*", this);
+        // controller.registerHandler(RestRequest.Method.GET, "/customer/external/*", this);
     }
 
     @Override
