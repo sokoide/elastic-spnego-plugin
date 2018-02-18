@@ -1,6 +1,7 @@
 package com.sokoide.elastic;
 
 import java.io.IOException;
+import java.util.HashMap;
 
 import org.apache.logging.log4j.Logger;
 import org.elasticsearch.action.ActionListener;
@@ -35,6 +36,8 @@ public class IndexLevelActionFilter extends AbstractComponent implements ActionF
     private final IndexNameExpressionResolver indexResolver;
     private final Settings settings;
     private final Logger logger;
+    private HashMap<String, Boolean> restrictedIndices = new HashMap<String, Boolean>();
+
 
     // private final AtomicReference<Optional<ACL>> acl;
     // private final AtomicReference<ESContext> context = new AtomicReference<>();
@@ -49,6 +52,8 @@ public class IndexLevelActionFilter extends AbstractComponent implements ActionF
         this.clusterService = clusterService;
         this.indexResolver = new IndexNameExpressionResolver(settings);
         this.logger = ServerLoggers.getLogger(getClass(), settings);
+        this.restrictedIndices.put("hoge2", false);
+        this.restrictedIndices.put("hoge3", false);
     }
 
     //   public IndexLevelActionFilter(Settings settings,
@@ -134,21 +139,8 @@ public class IndexLevelActionFilter extends AbstractComponent implements ActionF
         }
         logger.info("request-class:{}", request.getClass());
 
-        // if (request instanceof IndicesRequest) {
-        //     IndicesRequest ir = (IndicesRequest) request;
-        //     if (null != ir) {
-        //         IndicesOptions io = ir.indicesOptions();
-        //         logger.info("IndicesOptions:{}", io);
-
-        //         logger.info("IndicesRequest:{}", ir);
-        //         for (String i : ir.indices()) {
-        //             logger.info("IndicesRequest-index:{}", i);
-        //         }
-        //     }
-        // }
-
         // TODO: check ACL here
-        if (null != index && index.equals("hoge1")) {
+        if (null != index && restrictedIndices.containsKey(index)) {
             logger.info("Rejecting request:{}", request);
             ElasticsearchStatusException exc = new ElasticsearchStatusException("Unauthorized",
                     RestStatus.UNAUTHORIZED);
