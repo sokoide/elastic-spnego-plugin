@@ -102,8 +102,6 @@ public class TestPlugin extends Plugin implements ActionPlugin {
             final ClusterSettings clusterSettings, final IndexScopedSettings indexScopedSettings,
             final SettingsFilter settingsFilter, final IndexNameExpressionResolver indexNameExpressionResolver,
             final Supplier<DiscoveryNodes> nodesInCluster) {
-        // this.logger = ServerLoggers.getLogger(getClass(), settings);
-
         logger.info("TestPlugin::getRestHandlers");
         return singletonList(new SoKoideAuthRestHandler(settings, restController));
     }

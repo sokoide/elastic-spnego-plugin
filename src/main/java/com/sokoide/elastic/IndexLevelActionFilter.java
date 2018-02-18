@@ -133,20 +133,23 @@ public class IndexLevelActionFilter extends AbstractComponent implements ActionF
             index = r.index();
         }
         logger.info("request-class:{}", request.getClass());
-        
-        if (request instanceof IndicesRequest) {
-            IndicesRequest ir = (IndicesRequest) request;
-            IndicesOptions io = ir.indicesOptions();
-            logger.info("IndicesOptions:{}", io);
 
-            logger.info("IndicesRequest:{}", ir);
-            for (String i : ir.indices()) {
-                logger.info("IndicesRequest-index:{}", i);
-            }
-        }
+        // if (request instanceof IndicesRequest) {
+        //     IndicesRequest ir = (IndicesRequest) request;
+        //     if (null != ir) {
+        //         IndicesOptions io = ir.indicesOptions();
+        //         logger.info("IndicesOptions:{}", io);
+
+        //         logger.info("IndicesRequest:{}", ir);
+        //         for (String i : ir.indices()) {
+        //             logger.info("IndicesRequest-index:{}", i);
+        //         }
+        //     }
+        // }
 
         // TODO: check ACL here
         if (null != index && index.equals("hoge1")) {
+            logger.info("Rejecting request:{}", request);
             ElasticsearchStatusException exc = new ElasticsearchStatusException("Unauthorized",
                     RestStatus.UNAUTHORIZED);
             exc.addHeader("WWW-Authenticate", "Negotiate");
