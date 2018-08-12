@@ -40,9 +40,9 @@ public class TransportSoKoideAuthAction extends HandledTransportAction<SoKoideAu
         logger.info("TransportSoKoideAuthAction ctor");
     }
 
-    private String normalizePath(String s) {
-        return s.substring(0, s.length() - (s.endsWith("/") ? 1 : 0));
-    }
+//    private String normalizePath(String s) {
+//        return s.substring(0, s.length() - (s.endsWith("/") ? 1 : 0));
+//    }
 
     @Override
     protected void doExecute(SoKoideAuthRequest request, ActionListener<SoKoideAuthResponse> listener) {

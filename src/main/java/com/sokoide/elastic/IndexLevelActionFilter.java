@@ -31,9 +31,9 @@ import org.elasticsearch.action.delete.DeleteRequest;
 @Singleton
 public class IndexLevelActionFilter extends AbstractComponent implements ActionFilter {
 
-    private final ThreadPool threadPool;
-    private final ClusterService clusterService;
-    private final IndexNameExpressionResolver indexResolver;
+    //private final ThreadPool threadPool;
+    //private final ClusterService clusterService;
+    //private final IndexNameExpressionResolver indexResolver;
     private final Settings settings;
     private final Logger logger;
     private HashMap<String, Boolean> restrictedIndices = new HashMap<String, Boolean>();
@@ -48,10 +48,10 @@ public class IndexLevelActionFilter extends AbstractComponent implements ActionF
         super(settings);
 
         this.settings = settings;
-        this.threadPool = threadPool;
-        this.clusterService = clusterService;
-        this.indexResolver = new IndexNameExpressionResolver(settings);
-        this.logger = ServerLoggers.getLogger(getClass(), settings);
+        //this.threadPool = threadPool;
+        //this.clusterService = clusterService;
+        //this.indexResolver = new IndexNameExpressionResolver(this.settings);
+        this.logger = ServerLoggers.getLogger(getClass(), this.settings);
         this.restrictedIndices.put("hoge2", false);
         this.restrictedIndices.put("hoge3", false);
     }

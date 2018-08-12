@@ -1,22 +1,17 @@
 package com.sokoide.elastic;
 
-import org.elasticsearch.ElasticsearchException;
+import java.io.IOException;
+
+import org.apache.logging.log4j.Logger;
 import org.elasticsearch.client.node.NodeClient;
 import org.elasticsearch.common.inject.Inject;
+import org.elasticsearch.common.logging.ServerLoggers;
 import org.elasticsearch.common.settings.Settings;
-import org.elasticsearch.common.xcontent.XContentBuilder;
 import org.elasticsearch.rest.BaseRestHandler;
 import org.elasticsearch.rest.RestController;
 import org.elasticsearch.rest.RestHandler;
 import org.elasticsearch.rest.RestRequest;
 import org.elasticsearch.rest.action.RestToXContentListener;
-
-import java.io.IOException;
-import java.util.Map;
-import java.util.List;
-
-import org.apache.logging.log4j.Logger;
-import org.elasticsearch.common.logging.ServerLoggers;
 
 // Reference
 // http://david.pilato.fr/blog/2016/10/19/adding-a-new-rest-endpoint-to-elasticsearch-updated-for-ga/
